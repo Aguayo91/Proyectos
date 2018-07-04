@@ -1,0 +1,799 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=us-ascii">
+<title>FaceFirst Web API - General</title>
+<link rel=stylesheet type="text/css" href="style.css">
+</head>
+<body>
+
+<h1>General Information</h1>
+<p><a href="index.html">Contents</a></p>
+<hr>
+
+<h2><a name="request"></a>Request URLs</h2>
+
+<p>A client communicates with FaceFirst by making HTTP requests to various URLs. The FaceFirst
+back-end server address is TBD, but during development a temporary test server will be set up
+at ABG.</p>
+
+<p><span class=requrl>http://&lt;facefirst_server&gt;/FaceFirst/FF?ACTION=&lt;function_name&gt;</span></p>
+
+<div class=subdesc>
+
+<p>This is the main application interface. All parameters can be passed as either GET
+or application/x-www-form-urlencoded POST (the "standard" post encoding from method="post" web forms)
+parameters unless otherwise noted (some functions requiring image data use
+multipart/form-data encoding for all parameters).</p>
+
+<p>The parameter "ACTION" is always required, and specifies the function to call. The
+value of the ACTION parameter is one of the API <a href="functions.html">function names</a>,
+e.g. "login" or "queryCaseInfo", e.g.:</p>
+
+<p><span class=urlexample>http://&lt;facefirst_server&gt;/FaceFirst/FF?ACTION=login&amp;username=Joe&amp;password=abc123</span></p>
+
+<p>The ACTION parameter must always be specified as a GET or <i>application/x-www-form-urlencoded</i> POST parameter, 
+regardless of the encoding scheme used by the rest of the request parameters. 
+(e.g. for functions that require multipart/form-data parameters, "?ACTION=theaction" 
+must still be specified in the request URL as a GET parameter, <i>not</i> as a multipart/form-data POST parameter).</p>
+
+<p>The result of any request to this URL will be a JSON object, the content type should be "application/json" (although
+it is currently "text/plain" to deal with browsers that do not recognize "application/json" as a type it can display).
+See <a href="return.html">return object documentation</a> for more information about the JSON schema. Note: If requests 
+are made to "FFXML" rather than "FF", then XML data (with content type "text/plain" for now, although it may change to 
+"application/xml" in the future) will be returned instead of JSON. The XML schema is similar, but not identical, to the 
+JSON schema. The XML schema is not documented here -- contact Jason for documentation. If requests are made to "FFTEXT", 
+then plain text data is returned and the content type will be set to "text/plain"; this can be useful for debugging in 
+a browser that does not recognize "application/json" as a type it can display (note that FFTEXT does return JSON but 
+that may change in the future, do not use it as JSON data).</p>
+
+<p>The JSON request URLs (both "FF" and "FFTEXT") can accept an additional parameter that controls
+the format of the returned JSON data. By default, JSON data will be enclosed in a set of parentheses,
+ready to be passed to a single-argument JavaScript function. This can be changed by specifying a "V"
+parameter (capital V, case-sensitive) in the request:</p>
+
+<ul>
+<li>If "V" is missing, then the default format described above is used.<br>
+    Example: <span class=fixed>/FaceFirst/FF?ACTION=abc</span> returns <span class=fixed>({...data...})</span>.
+<li>If "V" is present but it's value is empty, then the returned
+    JSON object will be data only, with no enclosing parentheses (it will be enclosed in curly braces).<br>
+    Example: <span class=fixed>/FaceFirst/FF?ACTION=abc&amp;V=</span> returns <span class=fixed>{...data...}</span>.
+<li>If "V" is present and has a non-empty value, then
+    the value identifies a variable name and the returned JSON object will be a JavaScript
+    assignment to that variable.<br>
+    Example: <span class=fixed>/FaceFirst/FF?ACTION=abc&amp;V=value</span> returns <span class=fixed>value={...data...}</span>.
+</ul>
+
+<p>The "V" parameter <i>must</i> use the same submission method and encoding type as the "ACTION"
+parameter. Note again that the above only applies to URLs that return JSON data, such as "FF" and "FFTEXT". The "V" option
+will be ignored by "FFXML". Also note that "FFTEXT" may or may not interpret the "V" parameter in the same way in
+the future, and should not be relied on to produce actual JSON data (use "FF" instead).</p>
+
+<p>Instead of the "V" parameter, the user can specify a "JSONP" parameter to have the data returned as a parameter to
+a callback function.  The callback function name should be specified as the value to the "JSONP" parameter.  For
+example, the call <span class=fixed>/FaceFirst/FF?ACTION=abc&amp;JSONP=myCallback</span> returns 
+<span class=fixed>myCallback( {...data...} )</span>.  Note that only one of "V" and "JSONP" can be used in each
+request and an error will be returned if both parameters are present in a command.
+</p>
+
+<p>In production, the request URLs will only be publicly accessible via HTTPS. Clients must
+be prepared to handle this.</p>
+
+</div>
+
+<p><span class=requrl>
+http://&lt;facefirst_server&gt;/FaceFirst/CaseImage?image_id=&lt;image_id&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/CaseImage?inv_id=&lt;inv_id&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/CaseImage?case_id=&lt;case_id&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/CaseImage?image_id=&lt;image_id&gt;&amp;thumbnail_width=&lt;thumbnail_width&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/CaseImage?inv_id=&lt;inv_id&gt;&amp;thumbnail_width=&lt;thumbnail_width&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/CaseImage?case_id=&lt;case_id&gt;&amp;thumbnail_width=&lt;thumbnail_width&gt;
+</span></p>
+
+<div class=subdesc>
+
+<p>These URLs are  used to retrieve enrolled images for a case given an image ID (which can
+be used to display specific images for cases with multiple enrolled images), a case ID
+(which displays a single representative image for the case), or an 
+investigation log entry unique ID (which can be used to display enrolled images for cases that 
+generated user alert notifications).</p>
+
+<p>The additional parameter <i>thumbnail_width</i> may also be specified to request a smaller thumbnail
+image. The available thumbnail image with the <b>closest</b> width to the specified width will be returned.
+This should be used when possible to reduce the amount of data transferred from the back-end, as the normal
+non-thumbnail images are the original images uploaded by the user and may be very large.</p>
+
+<p>The investigation log unique ID is available in the results of investigation log queries.</p>
+
+<p>If more than one of image_id, inv_id, or case_id is specified, image_id takes
+precedence over over inv_id, and inv_id takes precedence over case_id.</p>
+
+<p>This will return an empty document if an invalid ID is given.</p>
+
+</div>
+
+<p><span class=requrl>http://&lt;facefirst_server&gt;/FaceFirst/SubDefImage?ID=&lt;subdef_id&gt;</span></p>
+
+<div class=subdesc>
+
+<p>This URL is used to retrieve the subscription group thumbnail image given a subscription
+group ID. This will return an empty document if an invalid ID is given.</p>
+
+</div>
+
+<p><span class=requrl>
+http://&lt;facefirst_server&gt;/FaceFirst/EvidenceImage?image_id=&lt;image_id&gt;&amp;use_thumbnail=&lt;true|false&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/EvidenceImage?inv_id=&lt;inv_id&gt;&amp;use_thumbnail=&lt;true|false&gt;<br>
+</span></p>
+
+<div class=subdesc>
+
+<p>This URL is used to retrieve an evidence image given an image id or an investigation log unique ID.
+This can be used to display the actual image from a tracking camera that triggered a
+user alert notification. The investigation log unique ID is generally available in the
+results of investigation log queries.  If both the image_id and inv_id are specified, the
+image_id takes precendence over the inv_id.</p>
+
+<p>The additional parameter <i>use_thumbnail</i> may also be specified to request a smaller thumbnail
+image. This should be used when possible to reduce the amount of data transferred from the back-end, as the normal
+non-thumbnail images may be very large.</p>
+
+</div>
+
+<a name="noteimage"></a>
+<p><span class=requrl>
+http://&lt;facefirst_server&gt;/FaceFirst/NoteImage?note_id=&lt;note_id&gt;&amp;use_thumbnail=&lt;true|false&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/NoteImage?image_id=&lt;image_id&gt;&amp;use_thumbnail=&lt;true|false&gt;
+</span></p>
+
+<div class=subdesc>
+
+<p>These URLs are  used to retrieve images for a note given an image ID (which can
+be used to display specific images for notes with multiple images) or a note ID
+(which displays a single representative image for the note).  If both an image ID and a note ID are specified, the image ID takes precedence over the note ID.  The current user must have <a href="general.html#rights">note Read</a> rights and the specified note must be accessible to the user.  This will return an empty document if an invalid note ID or image ID is specified.</p>
+
+<p>The additional parameter <i>use_thumbnail</i> may also be specified to request a smaller thumbnail
+image. This should be used when possible to reduce the amount of data transferred from the back-end, as the normal
+non-thumbnail images may be very large.</p>
+
+</div>
+
+<a name="alienimage"></a>
+<p><span class=requrl>
+http://&lt;facefirst_server&gt;/FaceFirst/AlienImage?alien_id=&lt;alien_id&gt;&amp;use_thumbnail=&lt;true|false&gt;<br>
+http://&lt;facefirst_server&gt;/FaceFirst/AlienImage?image_id=&lt;image_id&gt;&amp;use_thumbnail=&lt;true|false&gt;
+</span></p>
+
+<div class=subdesc>
+
+<p>These URLs are used to retrieve face images for an alien given an image ID (which can
+be used to display specific face images for aliens with multiple images) or an alien ID
+(which displays a single representative image for the alien).  If both an image ID and an alien ID are specified, the image ID takes precedence over the alien ID.  The current user must have <a href="general.html#rights">alien Read</a> rights and the specified alien must be accessible to the user.  This will return an empty document if an invalid alien ID or image ID is specified.</p>
+
+<p>The additional parameter <i>use_thumbnail</i> may also be specified to request a smaller thumbnail
+image. This should be used when possible to reduce the amount of data transferred from the back-end, as the normal
+non-thumbnail images may be very large.</p>
+
+</div>
+
+<p><span class=requrl>http://&lt;facefirst_server&gt;/FaceFirst/Alert?inv_id=&lt;inv_id&gt;</span></p>
+
+<div class=subdesc>
+
+<p>This URL is used to retrieve an HTML page describing an alert for a specified investigation log unique ID.  The
+data returned includes an evidence image and the details of the matching case.  The investigation log unique 
+ID is generally available in the results of investigation log queries.
+</p>
+
+</div>
+
+<p><span class=requrl>http://&lt;facefirst_server&gt;/FaceFirst/InvestigationLog?s=&lt;offset&gt;&amp;n=&lt;count&gt;</span></p>
+
+<div class=subdesc>
+
+<p>This url is used to retrieve an HTML page listing investigations that have been confirmed or rejected.  Each entry in
+the list contains a link to the alert generated by the investigation.  If the evidence image is missing, the entry in the
+table will be <i>italicized</i>.  The "s" and "n" parameters control the starting entry number and the number of entries 
+returned, respectively.  This function requires the current user to have <a href="general.html#rights">alert Read</a> rights.
+</p>
+
+</div>
+
+<p><span class=requrl>http://&lt;facefirst_server&gt;/FaceFirst/EventsByPerson?s=&lt;offset&gt;&amp;n=&lt;count&gt;&amp;start_alert_date=&lt;start_date&gt;&amp;end_alert_date=&lt;end_date&gt;zone_id=&lt;zone_id&gt;</span></p>
+
+<div class=subdesc>
+
+<p>This url is used to retrieve an HTML page listing confirmed events grouped by person for the specified start and end dates (format: <a href="general.html#types">date</a>), in the specified zones (the zone_id can be specified multiple times to include more than one zone).  By default the report is generated for the previous full day for all zones in groups of 50 events.  Each entry will contain the person data specified in the 'list description' of the person profile and a timestamp of the event in the appropriate station column.  The timestamp is a link to the alert generated by the event.  The "s" and "n" parameters control the starting entry number and the number of entries returned, respectively.  This function requires the current user to have <a href="general.html#rights">alert Read</a> rights.
+</p>
+
+</div>
+
+<p><span class=requrl>http://&lt;facefirst_server&gt;/FaceFirst/RequestStatsByUser?s=&lt;offset&gt;&amp;n=&lt;count&gt;&amp;start_date=&lt;start_date&gt;&amp;end_date=&lt;end_date&gt;</span></p>
+
+<div class=subdesc>
+
+<p>This url is used to retrieve an HTML page listing request statistics by day by user for the specified start and end dates (format: <a href="general.html#types">date</a>).  By default the report is generated for the previous full day in groups of 50 date/user/function tuples.  Each entry will contain the count of requests for each date/user/function.  The "s" and "n" parameters control the starting entry number and the number of entries returned, respectively.  This function requires the current user to have <a href="general.html#rights">user Read</a> and <a href="general.html#rights">user Edit</a> rights.
+</p>
+
+</div>
+
+<p><span class=requrl>http://&lt;facefirst_server&gt;/FaceFirst/Data?id=&lt;id&gt;&amp;timestamp=&lt;timestamp&gt;&amp;file=&lt;datafile&gt;</span></p>
+
+<div class=subdesc>
+
+<p>This url can be used to store/retrieve arbitrary data in the FaceFirst system.  The most common use for this
+api is store images to be used as future input for the <a href="functions.html#identify">identification</a> api (the
+id of an image stored with this api would be used as the image_id parameter).  To support cross-domain uploading
+of data, the user can specify a "timestamp" parameter with the data to be stored.  This value can be used to retrieve
+the status of the upload if the url is requested with the "timestamp" parameter (and no data).  The status is returned 
+in a <a href="return.html#SimpleResult">SimpleResult</a> json object with the a "status" of "ok" if the upload 
+succeeded and "error" on failure.  Data can be POST'ed directly to this routine or the "file" parameter can be 
+specified in a multipart/form-data encoded form.  This function requires the current user to have 
+<a href="general.html#rights">blob Create</a> rights to store data and <a href="general.html#rights">blob Read</a> 
+rights to retrieve data.  The maximum size of the data that can be stored in 4MB.
+</div>
+
+<p><a href="index.html">Contents</a></p>
+<hr>
+
+<h2><a name="rights"></a>User Rights</h2>
+
+<p>This is a list of user privileges that are referred to throughout this documentation.  The FaceFirst system
+privileges are distributed by 'object', e.g., accounts, users, cases, etc... A user can be given Create, Read, 
+Edit and Delete (CRED) privileges on each of the objects.  The values for Create (0x1), Read (0x2), Edit (0x4) 
+and Delete (0x8) are added together for each object and returned as an integer, e.g., a user with an 'account' right
+value of 14 can Read, Edit and Delete (but not Create) account objects.
+</p>
+
+<ul>
+
+<li>FaceFirst system objects.<ul class=userrights>
+<li><span class=item>account</span> - Account data.</li>
+<li><span class=item>alert</span> - Access to alert (event) log and face data (Create privilege not valid on this object) .</li>
+<li><span class=item>alertGroup</span> - Alert group data.</li>
+<li><span class=item>blob</span> - Ability to create/read arbitrary data.</li>
+<li><span class=item>case</span> - Case data.</li>
+<li><span class=item>caseGroup</span> - Case group data.</li>
+<li><span class=item>investigation</span> - Access to pending investigation data.</li>
+<li><span class=item>notes</span> - Time stamped (versioned) data, possibly associated with one or multiple cases.</li>
+<li><span class=item>station</span> - Tracking station (camera) data.</li>
+<li><span class=item>subscription</span> - Subscription data.</li>
+<li><span class=item>user</span> - User data.  A user with both account and user privileges can perform operations on users from other accounts.</li>
+<li><span class=item>zone</span> - Zone data.  Zones are used to add alert filtering based on tracking station, case group and alert group.</li>
+<li><span class=item>devices</span> - Device data.  Devices track the client software used to access the FaceFirst system; they can only be Read or Deleted, as the system automatically creates and updates the values as the devices use the system.</li>
+<li><span class=item>face</span> - Face classification data.  Users with read privileges can view/search on face classification data.</li>
+<li><span class=item>alien</span> - Alien, i.e., unknown people data.  Currently, alien data can only be Created, Read or Deleted, i.e., existing alien objects can not be Edited.</li>
+<li><span class=item>profile</span> - Profiles and their associated groups and fields.</li>
+<li><span class=item>tag</span> - Tag data; currently only applies to alert (event) log data.</li>
+</ul></li>
+
+</ul>
+
+<p><a href="index.html">Contents</a></p>
+<hr>
+
+<h2><a name="types"></a>Data Types</h2>
+
+<p>This is a list of data types used by function parameters and return objects.</p>
+
+<ul class=datatypes>
+  <li><span class=item>boolean</span> - A boolean value. If this is "0", "off" or "false" (case-insensitive), then it is false, otherwise, it is true.</li>
+  <li><span class=item>date</span> - This can be specified in one of two ways.  1.  A java time, i.e., milliseconds since epoch.  2.  A date and optional time in the form YYYYMMDDHHMM, e.g. 200809141530 is September 14, 2008, 2:30 PM.  The value is always interpreted in UTC.</li>
+  <li><span class=item>decimal</span> - A positive or negative decimal number, in either standard or scientific notation (-4.3, 0.9, 23e-2).</li>
+  <li><span class=item>image</span> - Raw image data. Functions that expect parameters of this type always take their parameters using multipart/form-data encoding. This data might be, say, the value of an HTML file input field. Image data can be in any of the supported formats (e.g. JPEG, GIF, BMP) -- TODO: Full list of supported formats.</li>
+  <li><span class=item>integer</span> - A positive or negative integer.</li>
+  <li><span class=item>string</span> - An arbitrary string.</li>
+  <li><span class=item>time</span> - A time in the form HHMM, 24-hours, leading 0's may be left out. E.g. 730 is 7:30AM, 1825 is 6.25PM, 0100 is 1:00AM.</li>
+</ul>
+
+<p><a href="index.html">Contents</a></p>
+<hr>
+
+<h2><a name="timezones"></a>Time Zone IDs</h2>
+
+<p>This is a list of time zone IDs that can be passed to API functions accepting time zones, and that
+may be returned in the "timezoneID" fields of various return objects. This list corresponds to Java's
+time zone ID list (which corresponds to the TZ server list at <a href="http://www.twinsun.com/tz/tz-link.htm">http://www.twinsun.com/tz/tz-link.htm</a>).
+Note that daylight savings time is considered. For example, the "America/New_York"
+timezone is the same as "EST5EDT", not "EST" (which does not switch to "EDT" in the summer). In
+addition to the values below, a generic form <i>[+|-]hh:mm</i> (e.g. "-05:00") may be used instead,
+although this will not adjust for daylight savings time:</p>
+
+<div class="subdesc">
+<pre>
+Africa/Abidjan
+Africa/Accra
+Africa/Addis_Ababa
+Africa/Algiers
+Africa/Asmera
+Africa/Bamako
+Africa/Bangui
+Africa/Banjul
+Africa/Bissau
+Africa/Blantyre
+Africa/Brazzaville
+Africa/Bujumbura
+Africa/Cairo
+Africa/Casablanca
+Africa/Ceuta
+Africa/Conakry
+Africa/Dakar
+Africa/Dar_es_Salaam
+Africa/Djibouti
+Africa/Douala
+Africa/El_Aaiun
+Africa/Freetown
+Africa/Gaborone
+Africa/Harare
+Africa/Johannesburg
+Africa/Kampala
+Africa/Khartoum
+Africa/Kigali
+Africa/Kinshasa
+Africa/Lagos
+Africa/Libreville
+Africa/Lome
+Africa/Luanda
+Africa/Lubumbashi
+Africa/Lusaka
+Africa/Malabo
+Africa/Maputo
+Africa/Maseru
+Africa/Mbabane
+Africa/Mogadishu
+Africa/Monrovia
+Africa/Nairobi
+Africa/Ndjamena
+Africa/Niamey
+Africa/Nouakchott
+Africa/Ouagadougou
+Africa/Porto-Novo
+Africa/Sao_Tome
+Africa/Timbuktu
+Africa/Tripoli
+Africa/Tunis
+Africa/Windhoek
+America/Adak
+America/Anchorage
+America/Anguilla
+America/Antigua
+America/Araguaina
+America/Aruba
+America/Asuncion
+America/Barbados
+America/Belem
+America/Belize
+America/Boa_Vista
+America/Bogota
+America/Boise
+America/Buenos_Aires
+America/Cambridge_Bay
+America/Cancun
+America/Caracas
+America/Catamarca
+America/Cayenne
+America/Cayman
+America/Chicago
+America/Chihuahua
+America/Cordoba
+America/Costa_Rica
+America/Cuiaba
+America/Curacao
+America/Danmarkshavn
+America/Dawson
+America/Dawson_Creek
+America/Denver
+America/Detroit
+America/Dominica
+America/Edmonton
+America/Eirunepe
+America/El_Salvador
+America/Fortaleza
+America/Glace_Bay
+America/Godthab
+America/Goose_Bay
+America/Grand_Turk
+America/Grenada
+America/Guadeloupe
+America/Guatemala
+America/Guayaquil
+America/Guyana
+America/Halifax
+America/Havana
+America/Hermosillo
+America/Indiana/Indianapolis
+America/Indiana/Knox
+America/Indiana/Marengo
+America/Indiana/Vevay
+America/Indianapolis
+America/Inuvik
+America/Iqaluit
+America/Jamaica
+America/Jujuy
+America/Juneau
+America/Kentucky/Louisville
+America/Kentucky/Monticello
+America/La_Paz
+America/Lima
+America/Los_Angeles
+America/Louisville
+America/Maceio
+America/Managua
+America/Manaus
+America/Martinique
+America/Mazatlan
+America/Mendoza
+America/Menominee
+America/Merida
+America/Mexico_City
+America/Miquelon
+America/Monterrey
+America/Montevideo
+America/Montreal
+America/Montserrat
+America/Nassau
+America/New_York
+America/Nipigon
+America/Nome
+America/Noronha
+America/North_Dakota/Center
+America/Panama
+America/Pangnirtung
+America/Paramaribo
+America/Phoenix
+America/Port-au-Prince
+America/Port_of_Spain
+America/Porto_Velho
+America/Puerto_Rico
+America/Rainy_River
+America/Rankin_Inlet
+America/Recife
+America/Regina
+America/Rio_Branco
+America/Rosario
+America/Santiago
+America/Santo_Domingo
+America/Sao_Paulo
+America/Scoresbysund
+America/Shiprock
+America/St_Johns
+America/St_Kitts
+America/St_Lucia
+America/St_Thomas
+America/St_Vincent
+America/Swift_Current
+America/Tegucigalpa
+America/Thule
+America/Thunder_Bay
+America/Tijuana
+America/Tortola
+America/Vancouver
+America/Whitehorse
+America/Winnipeg
+America/Yakutat
+America/Yellowknife
+Antarctica/Casey
+Antarctica/Davis
+Antarctica/DumontDUrville
+Antarctica/Mawson
+Antarctica/McMurdo
+Antarctica/Palmer
+Antarctica/South_Pole
+Antarctica/Syowa
+Antarctica/Vostok
+Arctic/Longyearbyen
+Asia/Aden
+Asia/Almaty
+Asia/Amman
+Asia/Anadyr
+Asia/Aqtau
+Asia/Aqtobe
+Asia/Ashgabat
+Asia/Baghdad
+Asia/Bahrain
+Asia/Baku
+Asia/Bangkok
+Asia/Beirut
+Asia/Bishkek
+Asia/Brunei
+Asia/Calcutta
+Asia/Choibalsan
+Asia/Chongqing
+Asia/Colombo
+Asia/Damascus
+Asia/Dhaka
+Asia/Dili
+Asia/Dubai
+Asia/Dushanbe
+Asia/Gaza
+Asia/Harbin
+Asia/Hong_Kong
+Asia/Hovd
+Asia/Irkutsk
+Asia/Istanbul
+Asia/Jakarta
+Asia/Jayapura
+Asia/Jerusalem
+Asia/Kabul
+Asia/Kamchatka
+Asia/Karachi
+Asia/Kashgar
+Asia/Katmandu
+Asia/Krasnoyarsk
+Asia/Kuala_Lumpur
+Asia/Kuching
+Asia/Kuwait
+Asia/Macao
+Asia/Macau
+Asia/Magadan
+Asia/Makassar
+Asia/Manila
+Asia/Muscat
+Asia/Nicosia
+Asia/Novosibirsk
+Asia/Omsk
+Asia/Oral
+Asia/Phnom_Penh
+Asia/Pontianak
+Asia/Pyongyang
+Asia/Qyzylorda
+Asia/Qatar
+Asia/Rangoon
+Asia/Riyadh
+Asia/Saigon
+Asia/Sakhalin
+Asia/Samarkand
+Asia/Seoul
+Asia/Shanghai
+Asia/Singapore
+Asia/Taipei
+Asia/Tashkent
+Asia/Tbilisi
+Asia/Tehran
+Asia/Thimphu
+Asia/Tokyo
+Asia/Ujung_Pandang
+Asia/Ulaanbaatar
+Asia/Urumqi
+Asia/Vientiane
+Asia/Vladivostok
+Asia/Yakutsk
+Asia/Yekaterinburg
+Asia/Yerevan
+Atlantic/Azores
+Atlantic/Bermuda
+Atlantic/Canary
+Atlantic/Cape_Verde
+Atlantic/Faeroe
+Atlantic/Jan_Mayen
+Atlantic/Madeira
+Atlantic/Reykjavik
+Atlantic/South_Georgia
+Atlantic/St_Helena
+Atlantic/Stanley
+Australia/Adelaide
+Australia/Brisbane
+Australia/Broken_Hill
+Australia/Darwin
+Australia/Hobart
+Australia/Lindeman
+Australia/Lord_Howe
+Australia/Melbourne
+Australia/Perth
+Australia/Sydney
+Europe/Amsterdam
+Europe/Andorra
+Europe/Athens
+Europe/Belfast
+Europe/Belgrade
+Europe/Berlin
+Europe/Bratislava
+Europe/Brussels
+Europe/Bucharest
+Europe/Budapest
+Europe/Chisinau
+Europe/Copenhagen
+Europe/Dublin
+Europe/Gibraltar
+Europe/Helsinki
+Europe/Istanbul
+Europe/Kaliningrad
+Europe/Kiev
+Europe/Lisbon
+Europe/Ljubljana
+Europe/London
+Europe/Luxembourg
+Europe/Madrid
+Europe/Malta
+Europe/Minsk
+Europe/Monaco
+Europe/Moscow
+Europe/Nicosia
+Europe/Oslo
+Europe/Paris
+Europe/Prague
+Europe/Riga
+Europe/Rome
+Europe/Samara
+Europe/San_Marino
+Europe/Sarajevo
+Europe/Simferopol
+Europe/Skopje
+Europe/Sofia
+Europe/Stockholm
+Europe/Tallinn
+Europe/Tirane
+Europe/Uzhgorod
+Europe/Vaduz
+Europe/Vatican
+Europe/Vienna
+Europe/Vilnius
+Europe/Warsaw
+Europe/Zagreb
+Europe/Zaporozhye
+Europe/Zurich
+Indian/Antananarivo
+Indian/Chagos
+Indian/Christmas
+Indian/Cocos
+Indian/Comoro
+Indian/Kerguelen
+Indian/Mahe
+Indian/Maldives
+Indian/Mauritius
+Indian/Mayotte
+Indian/Reunion
+Pacific/Apia
+Pacific/Auckland
+Pacific/Chatham
+Pacific/Easter
+Pacific/Efate
+Pacific/Enderbury
+Pacific/Fakaofo
+Pacific/Fiji
+Pacific/Funafuti
+Pacific/Galapagos
+Pacific/Gambier
+Pacific/Guadalcanal
+Pacific/Guam
+Pacific/Honolulu
+Pacific/Johnston
+Pacific/Kiritimati
+Pacific/Kosrae
+Pacific/Kwajalein
+Pacific/Majuro
+Pacific/Marquesas
+Pacific/Midway
+Pacific/Nauru
+Pacific/Niue
+Pacific/Norfolk
+Pacific/Noumea
+Pacific/Pago_Pago
+Pacific/Palau
+Pacific/Pitcairn
+Pacific/Ponape
+Pacific/Port_Moresby
+Pacific/Rarotonga
+Pacific/Saipan
+Pacific/Tahiti
+Pacific/Tarawa
+Pacific/Tongatapu
+Pacific/Truk
+Pacific/Wake
+Pacific/Wallis
+Pacific/Yap
+Etc/GMT
+Etc/GMT+0
+Etc/GMT-0
+Etc/GMT0
+Etc/Greenwich
+Etc/UCT
+Etc/UTC
+Etc/Universal
+GMT
+GMT+0
+GMT-0
+GMT0
+Greenwich
+UCT
+UTC
+Universal
+Etc/GMT+1
+Etc/GMT+2
+Etc/GMT+3
+Etc/GMT+4
+Etc/GMT+5
+Etc/GMT+6
+Etc/GMT+7
+Etc/GMT+8
+Etc/GMT+9
+Etc/GMT+10
+Etc/GMT+11
+Etc/GMT+12
+Etc/GMT-1
+Etc/GMT-2
+Etc/GMT-3
+Etc/GMT-4
+Etc/GMT-5
+Etc/GMT-6
+Etc/GMT-7
+Etc/GMT-8
+Etc/GMT-9
+Etc/GMT-10
+Etc/GMT-11
+Etc/GMT-12
+Etc/GMT-13
+Etc/GMT-14
+CET
+Canada/Atlantic
+CST6CDT
+Canada/Central
+Canada/East-Saskatchewan
+Canada/Eastern
+Canada/Mountain
+Canada/Newfoundland
+Canada/Pacific
+Canada/Saskatchewan
+Canada/Yukon
+EET
+EST
+EST5EDT
+HST
+MET
+MST
+MST7MDT
+PRC
+PST8PDT
+ROC
+ROK
+US/Alaska
+US/Aleutian
+US/Arizona
+US/Central
+US/East-Indiana
+US/Eastern
+US/Hawaii
+US/Indiana-Starke
+US/Michigan
+US/Mountain
+US/Pacific
+US/Pacific-New
+US/Samoa
+WET
+</pre>
+</div>
+
+<p><a href="index.html">Contents</a></p>
+<hr>
+
+<h2><a name="providers"></a>Phone Service Provider IDs</h2>
+
+<p>This is a list of phone service provider IDs that can be passed to API functions 
+accepting service providers, and that may be returned in the "provider" fields of 
+various return objects. Note that this list is subject to change as more service
+providers become supported (this information is currently used to determine how to
+send SMS and MMS alerts to users):</p>
+
+<div class="subdesc">
+<pre>
+alltel
+att
+cingular
+metropcs
+nextel
+powertel
+sprint
+suncom
+tmobile
+uscellular
+verizon
+virgin
+</pre>
+</div>
+
+<p><a href="index.html">Contents</a></p>
+<hr>
+
+</body>
+</html>
+

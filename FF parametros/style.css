@@ -1,0 +1,154 @@
+body { 
+  font-family: Tahoma,Arial,sans-serif;
+  font-size: 9pt;
+}
+
+td { 
+  font-family: Tahoma,Arial,sans-serif;
+  font-size: 9pt;
+}
+
+.secname { 
+  font-style: italic;
+}
+
+.footer { 
+  width: 100%;
+}
+
+.revision { 
+  font-style: italic;
+  text-align: left;
+}
+
+.contact { 
+  font-style: italic;
+  text-align: right;
+}
+
+.requrl { 
+  font-family: Courier New,Courier;
+  font-weight: bold;
+}
+
+.urlexample { 
+  font-family: Courier New,Courier;
+  padding-left: 4ex;
+}
+
+.fixed {
+  font-family: Courier New,Courier;
+}
+
+.subname { 
+  font-weight: bold;
+  margin-top: 1.5ex;
+  margin-bottom: 1.5ex;
+  padding-left: 2ex;
+}
+
+.subdesc { 
+  padding-left: 4ex;
+}
+
+ul.userrights .item {
+  font-weight: bold;
+}
+
+ul.datatypes .item {
+  font-weight: bold;
+}
+
+ul.output .branch { 
+}
+
+ul.output .leaf { 
+  font-weight: bold;
+}
+
+ul .name { 
+  font-weight: bold;
+}
+
+ul .desc { 
+}
+
+
+div.outtype { 
+}
+
+table.fnparams {
+}
+
+table.fnparams tr.header td {  
+  white-space: nowrap;
+  font-style: italic;
+}
+
+table.fnparams tr.header td.param { 
+  width: 15ex;
+}
+
+table.fnparams tr.header td.type { 
+  width: 8ex;
+}
+
+table.fnparams tr.header td.count { 
+  width: 8ex;
+}
+
+table.fnparams tr.header td.desc { 
+  width: 100ex;
+}
+
+table.fnparams td {
+  vertical-align: top;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+ul.perms {
+  list-style-type: none;
+  list-style-position: inside;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+ul.misc {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+ul.misc li {
+  list-style-type: none;
+  list-style-position: inside;
+}
+
+table.config { 
+}
+
+table.config tr.header td {
+  font-weight: bold;
+  font-style: italic;  
+}
+
+table.config tr.even { 
+}
+
+table.config tr.odd { 
+  background: #e0e0e0;
+}
+
+table.config td.key { 
+  white-space: nowrap;
+  font-weight: bold;
+  padding-right: 2ex;
+}
+
+table.config td.example { 
+  font-family: Courier New,Courier;
+  white-space: nowrap;
+  padding-right: 2ex;
+}
+
+table.config td.desc { 
+}

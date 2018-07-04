@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=us-ascii">
+<title>FaceFirst Web API - Configuration</title>
+<link rel=stylesheet type="text/css" href="style.css">
+</head>
+<body>
+
+<h1>Configuration</h1>
+<p><a href="index.html">Contents</a></p>
+
+<p>This describes back-end configuration settings. All configuration settings are stored
+in the FaceFirst database.</p>
+
+<hr>
+
+<h2><a name="options"></a>Back-End Configuration</h2>
+
+<p>All back-end configuration options are specified in the FaceFirst Mongo (currently 'WebAPI') database
+in the 'config' collection, i.e., the 'WebAPI.config' namespace.</p>
+
+<p>Currently the best way to modify the configuration options is to use the mongo.exe
+command line tool, or one of the GUI based Mongo database tools (e.g., MongoVue). The first
+time the web application is run, the config collection will be filled with the following
+default values. It is not necessary to manually add all of the configuration options to a new setup.
+Note that the default configuration specifies an edge server with an unspecified core server, i.e., a
+broken configuration.  If the machine being configured is a core server, 'isEdge' should be set to 0.
+If the machine being configured is an edge server, 'isEdge' should remain 1, but the 'remoteHost' value must
+specify the host and port of the core server's mongo database.  The http server must be restarted after any
+configuration changes.</p>
+
+<p>The following options are currently available:</p>
+
+<div class=subdesc>
+
+<table class=config id="thetable" cellspacing=0>
+<tr class=header>
+  <td>Key</td>
+  <td>Default (&lt;Example&gt;)</td>
+  <td>Description</td>
+</tr>
+
+<tr><td class=key>alertLanguageTemplate    </td><td class=example>mustache                                     </td><td class=desc>The template language used to generate alerts in the system.  All account templates must use the same language.  The currently available choices are mustache (the default) and django.</td></tr>
+<tr><td class=key>auditLogSize    </td><td class=example>1000                                     </td><td class=desc>The maximum size of the audit log file in Megabytes.  This only applies when logToDB is set; otherwise, log files are rolled over on a daily basis</td></tr>
+<tr><td class=key>biometrics    </td><td class=example>{ face : { name : main, module : GeminiFace, display : Local } }     </td><td class=desc>The biometrics supported by the installation.  By default, the Gemini 'face' biometric module is supported</td></tr>
+<tr><td class=key>deviceHistoryDays    </td><td class=example>30                                     </td><td class=desc>The number of days of history that should be kept for each device, e.g., mobile client, operator client, etc...</td></tr>
+<tr><td class=key>ethnicityThreshold    </td><td class=example>0.7                                     </td><td class=desc>The minimum white/black/asian face demographic value for the face's ethnicity to be considered.  If none of the white/black/asian values are greater than the threshold, the ethnicity of the face will be undefined.</td></tr>
+<tr><td class=key>exportRoot       </td><td class=example>C:\ProgramData\FaceFirst\Export					    </td><td class=desc>The directory containing asynchronous enrollment requests.</td></tr>
+<tr><td class=key>faceDetectionSupported    </td><td class=example>0|1    </td><td class=desc>This is a 'read-only' configuration variable that is set based on the capabilities of the face biometric provider.  If the provider supports face detection, the value will be 1; otherwise, the value is 0.</td></tr>
+<tr><td class=key>facesAlienRoot       </td><td class=example>&lt;facesRoot&gt;\Alien					    </td><td class=desc>The root directory of the alien faces image store.</td></tr>
+<tr><td class=key>facesCaseRoot       </td><td class=example>&lt;facesRoot&gt;\Case					    </td><td class=desc>The root directory of the case faces image store.</td></tr>
+<tr><td class=key>facesOtherRoot       </td><td class=example>&lt;facesRoot&gt;\Other					    </td><td class=desc>The root directory of the non-case (i.e., &quot;other&quot;) faces image store.</td></tr>
+<tr><td class=key>facesRoot       </td><td class=example>&lt;imageRoot&gt;\Faces					    </td><td class=desc>The root directory of the faces image store.</td></tr>
+<tr><td class=key>genderThreshold    </td><td class=example>0.7                                     </td><td class=desc>The minimum male/female face demographic value for the face's gender to be considered.  If neither the male or female value is greater than the threshold, the gender of the face will be undefined.</td></tr>
+<tr><td class=key>identifyMaxMatches    </td><td class=example>20                                     </td><td class=desc>Hard limit on the maximum number of matches that can be returned by the "identify" function.</td></tr>
+<tr><td class=key>identifyMinThreshold       </td><td class=example>0.0					    </td><td class=desc>Hard limit on minimum match threshold that can be specified to the "identify" function. This option may be removed in the future.</td></tr>
+<tr><td class=key>imageRoot       </td><td class=example>C:\ProgramData\FaceFirst\Images					    </td><td class=desc>The root directory of the image store.</td></tr>
+<tr><td class=key>isEdge    </td><td class=example>1                                     </td><td class=desc>Should be set to 1 if this is an edge server (the default) and 0 if this is a core server.</td></tr>
+<tr><td class=key>logDir    </td><td class=example>''                                     </td><td class=desc>The directory to put FaceFirst log files. The default is empty since we log to MongoDB by default (see logToDB).</td></tr>
+<tr><td class=key>logToDB    </td><td class=example>1                                     </td><td class=desc>If non-zero, audit and request logs will be written to MongoDB; if 0, the logDir variable should be set to indicate the location of file based log files.</td></tr>
+<tr><td class=key>metaDataNotCaseSensitive    </td><td class=example>0                                     </td><td class=desc>By default (with a 0 value), case/note meta data (e.g., name, address) is case sensitive and will be returned as it was entered.  If this option is set, all meta data is stored in upper case and searches of this data are performed in a non-case sensitive manner.  While presentation is compromised (all data in upper case), non-case sensitive searching is considerably faster than case sensitive searching.  This option should be enabled for databases with large numbers of cases and/or notes.</td></tr>
+<tr><td class=key>mongoHost    </td><td class=example>''                                     </td><td class=desc>The hostname/ip address and port of the mongo database server, in the format 'host[:port]'.  This is only needed if the mongo database server is not running locally on the default port.  The value can also be specified with the '-m' command line parameter to the WebAPI executable.</td></tr>
+<tr><td class=key>noteImageRoot       </td><td class=example>&lt;imageRoot&gt;\Notes					    </td><td class=desc>The root directory of the notes image store.</td></tr>
+<tr><td class=key>readOnlyBiometrics    </td><td class=example>{ }     </td><td class=desc>The 'read only' biometrics supported by the installation.  By default, no read only biometrics modules are supported.  Read only modules are configured with the same parameters are read/write biometrics, however, each type can support multiple modules.  As such, each type should be configured as an array of hashes, each containing name, module and display parameters.</td></tr>
+<tr><td class=key>remoteDBHost    </td><td class=example>''                                     </td><td class=desc>The hostname/ip address and port of the remote core server in the format 'host[:port]'.  Note this must be set if 'isEdge' is 1; the value will be ignored if 'isEdge' is 0.</td></tr>
+<tr><td class=key>remoteRouterTimeout    </td><td class=example>30                                     </td><td class=desc>The timeout (in seconds) for connections to the end point specified by the remoteRouterURL.</td></tr>
+<tr><td class=key>remoteRouterURL    </td><td class=example>''                                     </td><td class=desc>The URL of the remote core server router in the format 'protocol://host[:port]'.  Note this must be set if 'isEdge' is 1; the value will be ignored if 'isEdge' is 0.</td></tr>
+<tr><td class=key>requestLogSize    </td><td class=example>100                                     </td><td class=desc>The maximum size of the request log file in Megabytes.  This only applies when logToDB is set; otherwise, log files are rolled over on a daily basis</td></tr>
+<tr><td class=key>subdefMaxThumbnailBytes    </td><td class=example>2097152				    </td><td class=desc>Maximum file size, in bytes, of images uploaded for subscription definition thumbnails.</td></tr>
+<tr><td class=key>subdefMaxThumbnailHeight   </td><td class=example>768			    </td><td class=desc>Maximum height of subscription definition thumbnail images.</td></tr>
+<tr><td class=key>subdefMaxThumbnailWidth    </td><td class=example>1024					    </td><td class=desc>Maximum width of subscription definition thumbnail images.</td></tr>
+<tr><td class=key>subdefMinThumbnailHeight   </td><td class=example>0					    </td><td class=desc>Minimum height of subscription definition thumbnail images.</td></tr>
+<tr><td class=key>subdefMinThumbnailWidth    </td><td class=example>0					    </td><td class=desc>Minimum width of subscription definition thumbnail images.</td></tr>
+<tr><td class=key>thumbnailHeight         </td><td class=example>320                 </td><td class=desc>image thumbnail height.</td></tr> 
+<tr><td class=key>thumbnailWidth          </td><td class=example>240                 </td><td class=desc>image thumbnail width.</td></tr> 
+<tr><td class=key>traceLevel</td><td class=example>2                 </td><td class=desc>The level of audit output; Level 0 only contains indicate the start/end (or failure) of each routine; Each successive higher value adds additional information. In a high volume production environment, this should be changed to 0.</td></tr> 
+<tr><td class=key>trackAlienStatusChecks</td><td class=example>true                 </td><td class=desc>If true, each time the user checks the status of an alien archive search, the time and progress will be logged to the database.  If false, the time and progress are not logged.</td></tr> 
+<tr><td class=key>userNamesNotCaseSensitive    </td><td class=example>0                                     </td><td class=desc>If non-zero, user names will not be differentiated by case, e.g., user1 and User1 will be the same user; if 0, user names will be differentiated by case, e.g., user1 and User1 will be different users.</td></tr>
+
+</table>
+
+</div>
+
+<p>
+Each biometric has a separate Mongo database to hold its configuration and data.  The name of this database
+is the same as the name of the biometric, e.g., 'FaceVACS'.  The configuration for the biometric is specified 
+in the config collection, e.g., the FaceVACS biometric configuration is specified in the 'FaceVACS.config'
+namespace.
+</p>
+
+<p>The following options are available for the FaceVACS face biometric:</p>
+
+<div class=subdesc>
+
+<table class=config id="fvtable" cellspacing=0>
+<tr class=header>
+  <td>Key</td>
+  <td>Default (&lt;Example&gt;)</td>
+  <td>Description</td>
+</tr>
+
+<tr><td class=key>datatype    </td><td class=example>image/face                                     </td><td class=desc>The type of data processed by this biometric</td></tr>
+<tr><td class=key>dbAddr    </td><td class=example>127.0.0.1                                     </td><td class=desc>The ip address of the MySQL database.</td></tr>
+<tr><td class=key>dbPort    </td><td class=example>3306                                     </td><td class=desc>The port of the MySQL database.</td></tr>
+<tr><td class=key>dbPwd    </td><td class=example>&lt;password&gt;                                     </td><td class=desc>The password for dbUser.</td></tr>
+<tr><td class=key>dbUser    </td><td class=example>&lt;username&gt;                                     </td><td class=desc>The username to use to login to the MySQL database.</td></tr>
+<tr><td class=key>maxCasesReturned    </td><td class=example>20                                     </td><td class=desc>The maximum number of cases to be returned from an identification.</td></tr>
+<tr><td class=key>namespace    </td><td class=example>urn:FVVideoScanWS                                     </td><td class=desc>The FaceVACS web service namespace.</td></tr>
+<tr><td class=key>timeout       </td><td class=example>10					    </td><td class=desc>The number of seconds to wait for a FaceVACS web service to return.</td></tr>
+<tr><td class=key>watchlistURL    </td><td class=example>http://localhost:1063                </td><td class=desc>The url for the FaceVACS web service.</td></tr>
+
+</table>
+
+</div>
+
+<p>The following options are available for the Gemini face biometric.  Note that the default configuration is for an edge server, with an unspecified core server, i.e., a broken configuration.
+If the machine being configured is a core server, 'isEdge' should be set to 0.  If the machine being configured is an edge server, 'isEdge' should remain 1, but the 'coreURL' value 
+must be set to point to the Gemini system on the core server.  The response timeout to the core server can also be configured by setting the coreTimeout value.  The http server must
+be restarted after any configuration changes.</p>
+
+<div class=subdesc>
+
+<table class=config id="geminitable" cellspacing=0>
+<tr class=header>
+  <td>Key</td>
+  <td>Default (&lt;Example&gt;)</td>
+  <td>Description</td>
+</tr>
+
+<tr><td class=key>datatype    </td><td class=example>image/face                                     </td><td class=desc>The type of data processed by this biometric</td></tr>
+<tr><td class=key>defaultArchiveGroup    </td><td class=example>**                                     </td><td class=desc>The default group for archive enrollment; must match the Gemini service configuration.</td></tr>
+<tr><td class=key>detectionThreshold    </td><td class=example>0.0                                     </td><td class=desc>Face Detection: The minimum threshold for detection.</td></tr>
+<tr><td class=key>includeDemographics    </td><td class=example>1                                     </td><td class=desc>Face Encoding: True if Gemini should return face demographics.</td></tr>
+<tr><td class=key>isEdge    </td><td class=example>1                                     </td><td class=desc>Should be set to 1 if this is an edge server (the default) and 0 if this is a core server.</td></tr>
+<tr><td class=key>localTimeout       </td><td class=example>30					    </td><td class=desc>The number of seconds to wait for the local Gemini web service to return.</td></tr>
+<tr><td class=key>localURL    </td><td class=example>http://127.0.0.1:77                                     </td><td class=desc>The base URL to access Gemini on the local machine.</td></tr>
+<tr><td class=key>maxCasesReturned    </td><td class=example>50                                     </td><td class=desc>The maximum number of cases to be returned from an identification.</td></tr>
+<tr><td class=key>maxEyeDistance    </td><td class=example>0.75                                     </td><td class=desc>Face Detection: The maximum distance between the eyes based on the width of the image, e.g., maximum eye distance of 1000 pixel image with maxEyeDistance of 0.75 = 1000 * 0.75 = 750 pixels</td></tr>
+<tr><td class=key>minEyeDistance    </td><td class=example>0.05                                     </td><td class=desc>Face Detection: The minimum distance between the eyes based on the width of the image, e.g., minimum eye distance of 1000 pixel image with minEyeDistance of 0.05 = 1000 * 0.05 = 50 pixels</td></tr>
+<tr><td class=key>remoteTimeout       </td><td class=example>45					    </td><td class=desc>The number of seconds to wait for the core Gemini web service to return.</td></tr>
+<tr><td class=key>remoteURL    </td><td class=example>''                                     </td><td class=desc>The base URL to access Gemini on the core machine.  This must be set if 'isEdge' is 1; the value will be ignored if 'isEdge' is 0.</td></tr>
+
+</table>
+
+</div>	
+<script type="text/javascript">
+	
+	var tbls = new Array();
+	tbls[0] = document.getElementById('thetable');
+	tbls[1] = document.getElementById('fvtable');
+	tbls[2] = document.getElementById('geminitable');
+	var n, x;
+
+	for (x = 0; x < tbls.length; ++ x) {
+		var tbl = tbls[x];
+		for (n = 0; n < tbl.rows.length; ++ n) {
+			var cls = tbl.rows[n].className;
+			if (cls == '') {
+				if ((n % 2) == 0)
+					tbl.rows[n].className = 'even';
+				else
+					tbl.rows[n].className = 'odd';
+			}
+		}
+	}
+</script>
+
+
+</div>
+
+<p>The web application must be reloaded for configuration options to take effect.
+</p>
+
+
+<p><a href="index.html">Contents</a></p>
+<hr>
+
+</body>
+</html>
+

@@ -1,0 +1,18 @@
+
+https://code.tutsplus.com/es/tutorials/an-introduction-to-face-detection-on-android--cms-25212
+
+
+compile 'com.google.android.gms:play-services-vision:8.1.0'
+<meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="face"/>
+
+
+
+FaceDetector.Builder
+https://developers.google.com/android/reference/com/google/android/gms/vision/face/FaceDetector.Builder
+
+
+
+FaceDetector  github search!
+https://github.com/RedApparat/FaceDetector
+
+Primer

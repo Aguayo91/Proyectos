@@ -1,0 +1,2 @@
+Detectar Rostros Juanita
+https://firebase.google.com/docs/ml-kit/android/detect-faces

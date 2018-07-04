@@ -1,0 +1,14 @@
+login
+http://10.50.108.66/FaceFirst/FF/?ACTION=login&username=Azteca&password=FF12345&V=
+
+alertas
+http://10.50.108.66/FaceFirst/InvestigationLog
+
+Searchcase
+http://10.50.108.66/FaceFirst/FF/?ACTION=searchCases&count=10
+
+CaseImage
+http://10.50.108.66/FaceFirst/CaseImage?case_id=5b18134d0010b4180e0111bd
+
+Detectar Rostros Juanita
+https://firebase.google.com/docs/ml-kit/android/detect-faces

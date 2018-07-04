@@ -1,0 +1,19 @@
+The key fingerprint is:
+SHA256:dulDMPbTDGvzZVrf4Fb6hERi+hDiW78yprJAYa50U0o caguayo@elektra.com.mx
+The SHA256 clave cifrada de git
+
+
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|                 |
+|    E . = o o .  |
+|   + + o = X o   |
+|  . *   S & o * .|
+| . + . . B B B *.|
+|  . .   . o = = +|
+|     ..   +. o o |
+|      .o.o o.   .|
++----[SHA256]-----+
+
+

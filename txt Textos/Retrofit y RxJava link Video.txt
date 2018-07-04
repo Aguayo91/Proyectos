@@ -1,0 +1,7 @@
+
+Arquitecto de aplicaciones de Android con MVP, Dagger, Retrofit y RxJava [Video]
+
+https://www.packtpub.com/application-development/architect-android-apps-mvp-dagger-retrofit-rxjava-video
+
+
+maven { url "https://maven.google.com" }

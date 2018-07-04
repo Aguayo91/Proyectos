@@ -1,0 +1,342 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=us-ascii">
+<title>FaceFirst Web API</title>
+<link rel=stylesheet type="text/css" href="style.css">
+</head>
+<body>
+
+<h1>FaceFirst Web API</h1>
+
+<p>To read this document effectively, read <span class=secname>Request URLs</span> for a general overview,
+then use the <span class=secname>Functions</span> documentation as a reference. The
+<span class=secname>User Rights</span> and <span class=secname>Return Objects</span> documentation
+are referred to by the function documentation and should be used as further
+reference material. The <span class=secname>Data Types</span> documentation is referred to by the
+function and return objects documentation.</p>
+
+<p>A summary of changes in each revision of this documentation may be found by clicking the revision
+number at the bottom of this index page.</p>
+
+<hr>
+<h2>Table of Contents</h2>
+
+<ul class=toc>
+
+ <li><a href="general.html">General</a><ul>
+  <li><a href="general.html#request">Request URLs</a></li>
+  <li><a href="general.html#rights">User Rights</a></li>
+  <li><a href="general.html#types">Data Types</a></li>
+  <li><a href="general.html#timezones">Time Zone IDs</a></li>
+  <li><a href="general.html#providers">Phone Service Provider IDs</a></li>
+ </ul></li>
+
+ <li><a href="functions.html">Functions</a><ul>
+  
+  <li>Version<ul>
+  <li><a href="functions.html#version">version</a></li>
+  </ul></li>
+  
+  <li>Config<ul>
+  <li><a href="functions.html#config">config</a></li>
+  </ul></li>
+  
+  <li>Session<ul>
+  <li><a href="functions.html#login">login</a></li>
+  <li><a href="functions.html#logout">logout</a></li>
+  <li><a href="functions.html#querySessionInfo">querySessionInfo</a></li>           
+  </ul></li>
+
+  <li>Accounts<ul>
+  <li><a href="functions.html#createAccount">createAccount</a></li>
+  <li><a href="functions.html#deleteAccount">deleteAccount</a></li>
+  <li><a href="functions.html#editAccount">editAccount</a></li>
+  <li><a href="functions.html#queryAccount">queryAccount</a></li>
+  <li><a href="functions.html#queryAccountStatistics">queryAccountStatistics</a></li>
+  </ul></li>
+
+  <li>Users<ul>
+  <li><a href="functions.html#createUser">createUser</a></li>
+  <li><a href="functions.html#deleteUser">deleteUser</a></li>
+  <li><a href="functions.html#editUser">editUser</a></li>
+  <li><a href="functions.html#editUserPassword">editUserPassword</a></li>
+  <li><a href="functions.html#queryUser">queryUser</a></li>
+  <li><a href="functions.html#queryLogins">queryLogins</a></li>
+  <li><a href="functions.html#editUserAlertSchedule ">editUserAlertSchedule </a></li>
+  <li><a href="functions.html#queryUserAlertSchedule">queryUserAlertSchedule</a></li>
+  <li><a href="functions.html#getTOTPUri">getTOTPUri</a></li>
+  </ul></li>
+
+  <li>Case Groups<ul>
+  <li><a href="functions.html#createCaseGroup">createCaseGroup</a></li>
+  <li><a href="functions.html#deleteCaseGroup">deleteCaseGroup</a></li>
+  <li><a href="functions.html#editCaseGroup">editCaseGroup</a></li>
+  <li><a href="functions.html#queryCaseGroup">queryCaseGroup</a></li>
+  <li><a href="functions.html#addCaseGroupCase">addCaseGroupCase</a></li>
+  <li><a href="functions.html#removeCaseGroupCase">removeCaseGroupCase</a></li>
+  <li><a href="functions.html#addCaseGroupZone">addCaseGroupZone</a></li>
+  <li><a href="functions.html#removeCaseGroupZone">removeCaseGroupZone</a></li>
+  </ul></li>
+
+  <li>Cases<ul>
+  <li><a href="functions.html#enrollCase">enrollCase</a></li>
+  <li><a href="functions.html#deleteCase">deleteCase</a></li>
+  <li><a href="functions.html#editCaseInfo">editCaseInfo</a></li>
+  <li><a href="functions.html#clearCaseInfo">clearCaseInfo</a></li>
+  <li><a href="functions.html#addCaseImage">addCaseImage</a></li>
+  <li><a href="functions.html#removeCaseImage">removeCaseImage</a></li>
+  <li><a href="functions.html#syncBiometricData">syncBiometricData</a></li>
+  <li><a href="functions.html#queryCaseInfo">queryCaseInfo</a></li>
+  <li><a href="functions.html#queryCaseFaceInfo">queryCaseFaceInfo</a></li>
+  <li><a href="functions.html#searchCases">searchCases</a></li>
+  <li><a href="functions.html#identify">identify</a></li>
+  <li><a href="functions.html#caseProfiles">caseProfiles</a></li>
+  <li><a href="functions.html#biometricProfiles">biometricProfiles</a></li>
+  </ul></li>
+
+  <li>Alert Groups<ul>
+  <li><a href="functions.html#createAlertGroup">createAlertGroup</a></li>
+  <li><a href="functions.html#deleteAlertGroup">deleteAlertGroup</a></li>
+  <li><a href="functions.html#editAlertGroup">editAlertGroup</a></li>
+  <li><a href="functions.html#queryAlertGroup">queryAlertGroup</a></li>
+  <li><a href="functions.html#addAlertGroupCase">addAlertGroupCase</a></li>
+  <li><a href="functions.html#removeAlertGroupCase">removeAlertGroupCase</a></li>
+  <li><a href="functions.html#addUserToAlertGroup">addUserToAlertGroup</a></li>
+  <li><a href="functions.html#removeUserFromAlertGroup">removeUserFromAlertGroup</a></li>
+  <li><a href="functions.html#addAlertGroupZone">addAlertGroupZone</a></li>
+  <li><a href="functions.html#removeAlertGroupZone">removeAlertGroupZone</a></li>
+  </ul></li>
+
+  <li>Subscriptions<ul>
+  <li><a href="functions.html#createSubscriptionGroup">createSubscriptionGroup</a></li>
+  <li><a href="functions.html#removeSubscriptionGroup">removeSubscriptionGroup</a></li>
+  <li><a href="functions.html#editSubscriptionGroup">editSubscriptionGroup</a></li>
+  <li><a href="functions.html#addSubscription">addSubscription</a></li>
+  <li><a href="functions.html#removeSubscription">removeSubscription</a></li>
+  <li><a href="functions.html#editSubscription">editSubscription</a></li>
+  <li><a href="functions.html#querySubscriptions">querySubscriptions</a></li>
+  </ul></li>
+
+  <li>Tracking Stations<ul>
+  <li><a href="functions.html#addStation">addStation</a></li>
+  <li><a href="functions.html#deleteStation">deleteStation</a></li>
+  <li><a href="functions.html#editStation">editStation</a></li>
+  <li><a href="functions.html#queryStation">queryStation</a></li>
+  <li><a href="functions.html#addStationZone">addStationZone</a></li>
+  <li><a href="functions.html#removeStationZone">removeStationZone</a></li>
+  </ul></li>
+
+  <li>Logging<ul>
+  <li><a href="functions.html#queryEnrollmentLog">queryEnrollmentLog</a></li>
+  <li><a href="functions.html#queryIdentificationLog">queryIdentificationLog</a></li>
+  <li><a href="functions.html#queryAlienIdentificationLog">queryAlienIdentificationLog</a></li>
+  <li><a href="functions.html#queryInvestigationLog">queryInvestigationLog</a></li>
+  <li><a href="functions.html#queryRecentAlerts">queryRecentAlerts</a></li>
+  <li><a href="functions.html#queryRecentAlertsByCase">queryRecentAlertsByCase</a></li>
+  <li><a href="functions.html#queryRecentAlertsByCaseData">queryRecentAlertsByCaseData</a></li>
+  <li><a href="functions.html#queryAlert">queryAlert</a></li>
+  <li><a href="functions.html#deleteAlerts">deleteAlerts</a></li>
+  <li><a href="functions.html#tagAlerts">tagAlerts</a></li>
+  <li><a href="functions.html#queryAlertActivity">queryAlertActivity</a></li>
+  <li><a href="functions.html#queryAlertCountByZone">queryAlertCountByZone</a></li>
+  <li><a href="functions.html#queryAlertCountByPerson">queryAlertCountByPerson</a></li>
+  <li><a href="functions.html#queryZoneCountByPerson">queryZoneCountByPerson</a></li>
+  <li><a href="functions.html#queryPersonCountByZone">queryPersonCountByZone</a></li>
+  <li><a href="functions.html#queryAlertCountByTime">queryAlertCountByTime</a></li>
+  <li><a href="functions.html#queryAlienCountByZone">queryAlienCountByZone</a></li>
+  <li><a href="functions.html#queryAlienCountByTime">queryAlienCountByTime</a></li>
+  <li><a href="functions.html#queryRequestStatsByDay">queryRequestStatsByDay</a></li>
+  </ul></li>
+
+  <li>Investigations<ul>
+  <li><a href="functions.html#dequeueInvestigation">dequeueInvestigation</a></li>
+  <li><a href="functions.html#updateInvestigation">updateInvestigation</a></li>
+  <li><a href="functions.html#completeInvestigation">completeInvestigation</a></li>
+  </ul></li>
+  
+  <li>Notes<ul>
+  <li><a href="functions.html#addNote">addNote</a></li>
+  <li><a href="functions.html#deleteNote">deleteNote</a></li>
+  <li><a href="functions.html#editNote">editNote</a></li>
+  <li><a href="functions.html#clearNote">clearNote</a></li>
+  <li><a href="functions.html#addNoteImage">addNoteImage</a></li>
+  <li><a href="functions.html#removeNoteImage">removeNoteImage</a></li>
+  <li><a href="functions.html#queryNote">queryNote</a></li>
+  <li><a href="functions.html#queryNotesByCase">queryNotesByCase</a></li>
+  <li><a href="functions.html#searchNotes">searchNotes</a></li>
+  </ul></li>
+
+  <li>Zones<ul>
+  <li><a href="functions.html#addZone">addZone</a></li>
+  <li><a href="functions.html#deleteZone">deleteZone</a></li>
+  <li><a href="functions.html#editZone">editZone</a></li>
+  <li><a href="functions.html#queryZone">queryZone</a></li>
+  </ul></li>
+  
+  <li>Devices<ul>
+  <li><a href="functions.html#searchDevices">searchDevices</a></li>
+  <li><a href="functions.html#deleteDevices">deleteDevices</a></li>
+  <li><a href="functions.html#queryDevice">queryDevice</a></li>
+  </ul></li>
+  
+  <li>Faces<ul>
+  <li><a href="functions.html#searchFaces">searchFaces</a></li>
+  <li><a href="functions.html#detectFaces">detectFaces</a></li>
+  </ul></li>
+  
+  <li>Aliens<ul>
+  <li><a href="functions.html#enrollAlien">enrollAlien</a></li>
+  <li><a href="functions.html#deleteAlien">deleteAlien</a></li>
+  <li><a href="functions.html#searchAliens">searchAliens</a></li>
+  <li><a href="functions.html#queryAlienFaceInfo">queryAlienFaceInfo</a></li>
+  <li><a href="functions.html#searchAlienFaces">searchAlienFaces</a></li>
+  <li><a href="functions.html#deleteAlienFaces">deleteAlienFaces</a></li>
+  <li><a href="functions.html#identifyAlien">identifyAlien</a></li>
+  <li><a href="functions.html#identifyAlienStatus">identifyAlienStatus</a></li>
+  <li><a href="functions.html#identifyAlienCancel">identifyAlienCancel</a></li>
+  <li><a href="functions.html#identifyAlienDelete">identifyAlienDelete</a></li>
+  </ul></li>
+  
+  <li>Profiles<ul>
+  <li><a href="functions.html#queryFields">queryFields</a></li>
+  <li><a href="functions.html#writeField">writeField</a></li>
+  <li><a href="functions.html#queryGroups">queryGroups</a></li>
+  <li><a href="functions.html#writeGroup">writeGroup</a></li>
+  <li><a href="functions.html#queryProfiles">queryProfiles</a></li>
+  <li><a href="functions.html#writeProfile">writeProfile</a></li>
+  </ul></li>
+  
+  <li>Tags<ul>
+  <li><a href="functions.html#createTag">createTag</a></li>
+  <li><a href="functions.html#deleteTag">deleteTag</a></li>
+  <li><a href="functions.html#editTag">editTag</a></li>
+  <li><a href="functions.html#queryTags">queryTags</a></li>
+  </ul></li>
+  
+ </ul></li>
+
+ <li><a href="return.html">Return Objects</a><ul>
+  <li><a href="return.html#AccountInfoList">AccountInfoList</a></li>
+  <li><a href="return.html#AccountStatistics">AccountStatistics</a></li>
+  <li><a href="return.html#AlertActivityInfoList">AlertActivityInfoList</a></li>
+  <li><a href="return.html#AlertGroupInfoList">AlertGroupInfoList</a></li>
+  <li><a href="return.html#AlienInfoList">AlienInfoList</a></li>
+  <li><a href="return.html#AlienCountByTimeInfoList">AlienCountByTimeInfoList</a></li>
+  <li><a href="return.html#AlienCountByZoneInfoList">AlienCountByZoneInfoList</a></li>
+  <li><a href="return.html#AlienFaceInfoList">AlienFaceInfoList</a></li>
+  <li><a href="return.html#AlienIdentificationInfo">AlienIdentificationInfo</a></li>
+  <li><a href="return.html#AlienIdentificationLogEntries">AlienIdentificationLogEntries</a></li>
+  <li><a href="return.html#AlienIdentificationStatus">AlienIdentificationStatus</a></li>
+  <li><a href="return.html#CaseFaceInfoList">CaseFaceInfoList</a></li>
+  <li><a href="return.html#CaseGroupInfoList">CaseGroupInfoList</a></li>
+  <li><a href="return.html#CaseInfoList">CaseInfoList</a></li>
+  <li><a href="return.html#ConfigInfoList">ConfigInfoList</a></li>
+  <li><a href="return.html#DeviceInfoList">DeviceInfoList</a></li>
+  <li><a href="return.html#EnrollmentLogEntries">EnrollmentLogEntries</a></li>
+  <li><a href="return.html#EnrollmentStatus">EnrollmentStatus</a></li>
+  <li><a href="return.html#FaceCoordinatesInfoList">FaceCoordinatesInfoList</a></li>
+  <li><a href="return.html#FaceInfoList">FaceInfoList</a></li>
+  <li><a href="return.html#IdentificationStatus">IdentificationStatus</a></li>
+  <li><a href="return.html#IdentificationLogEntries">IdentificationLogEntries</a></li>
+  <li><a href="return.html#InvestigationLogEntries">InvestigationLogEntries</a></li>
+  <li><a href="return.html#NoteInfoList">NoteInfoList</a></li>
+  <li><a href="return.html#ProfileInfoList">ProfileInfoList</a></li>
+  <li><a href="return.html#RawFieldInfoList">RawFieldInfoList</a></li>
+  <li><a href="return.html#RawGroupInfoList">RawGroupInfoList</a></li>
+  <li><a href="return.html#RawProfileInfoList">RawProfileInfoList</a></li>
+  <li><a href="return.html#RecentAlertByCaseInfoList">RecentAlertByCaseInfoList</a></li>
+  <li><a href="return.html#RecentAlertCountByPersonInfoList">RecentAlertCountByPersonInfoList</a></li>
+  <li><a href="return.html#RecentAlertCountByTimeInfoList">RecentAlertCountByTimeInfoList</a></li>
+  <li><a href="return.html#RecentAlertCountByZoneInfoList">RecentAlertCountByZoneInfoList</a></li>
+  <li><a href="return.html#RecentAlertInfoList">RecentAlertInfoList</a></li>
+  <li><a href="return.html#RecentPersonCountByZoneInfoList">RecentPersonCountByZoneInfoList</a></li>
+  <li><a href="return.html#RecentZoneCountByPersonInfoList">RecentZoneCountByPersonInfoList</a></li>
+  <li><a href="return.html#RequestStatsByDayByUserEntries">RequestStatsByDayByUserEntries</a></li>
+  <li><a href="return.html#RequestStatsByDayByFunctionEntries">RequestStatsByDayByFunctionEntries</a></li>
+  <li><a href="return.html#SessionInfo">SessionInfo</a></li>
+  <li><a href="return.html#SimpleResult">SimpleResult</a></li>
+  <li><a href="return.html#StationInfoList">StationInfoList</a></li>
+  <li><a href="return.html#SubscriptionInfoList">SubscriptionInfoList</a></li>
+  <li><a href="return.html#TagInfoList">TagInfoList</a></li>
+  <li><a href="return.html#TransactionInfo">TransactionInfo</a></li>
+  <li><a href="return.html#UserAlertScheduleInfo">UserAlertScheduleInfo</a></li>
+  <li><a href="return.html#UserInfoList">UserInfoList</a></li>
+  <li><a href="return.html#VersionInfo">VersionInfo</a></li>
+  <li><a href="return.html#ZoneInfoList">ZoneInfoList</a></li>
+ </ul></li>
+
+ <li><a href="config.html">Configuration</a><ul>
+  <li><a href="config.html#options">Back-End Settings</a></li>
+ </ul></li>
+
+</ul>
+
+<hr>
+
+<table class=footer>
+<tr>
+<td class=revision id="version"></td>
+<td class=contact>Contact: <a href="mailto:support@facefirst.com">FaceFirst Support</a></td>
+</tr>
+</table>
+
+<script type="text/javascript">
+window.onload = function() 
+{
+	setVersion();
+};
+
+function setVersion()
+{
+	var req = createRequest();
+	if ( req == null )
+	{
+		document.getElementById( 'version' ).innerHTML = "Version: n/a";
+		return;
+	}
+	
+	req.onreadystatechange = function() 
+	{
+		if ( req.readyState != 4 ) 
+			return; // Not there yet
+			
+		if ( req.status != 200 ) 
+		{
+			document.getElementById( 'version' ).innerHTML = "Version: n/a";
+		}
+		else
+		{
+			var verObj = eval( req.responseText );
+			document.getElementById( 'version' ).innerHTML = "Version: " + verObj["versioninfo"]["version"];
+		}
+	}
+	
+	req.open( "GET", "/FaceFirst/FFTEXT/?ACTION=version", true );
+	req.send();
+}
+
+function createRequest() 
+{
+	var result = null;
+	if ( window.XMLHttpRequest ) 
+	{
+		// FireFox, Safari, etc.
+		result = new XMLHttpRequest();
+	}
+	else if ( window.ActiveXObject ) 
+	{
+		// MSIE
+		result = new ActiveXObject( "Microsoft.XMLHTTP" );
+	} 
+	else 
+	{
+		// Uh oh...
+	}
+	return result;
+}
+
+</script>
+
+</body>
+</html>

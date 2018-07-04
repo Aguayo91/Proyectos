@@ -1,0 +1,32 @@
+
+
+
+[http]
+proxy = http://Bancoazteca:Gruposalinas2345@10.50.8.21:8080
+
+export http_proxy="bancoazteca\B196228:Gruposalinas2345@10.50.8.21:80"
+export https_proxy="bancoazteca\B196228:Gruposalinas2345@10.50.8.21:80"
+
+
+systemProp.http.proxyPort=80
+systemProp.proxySet='true'
+systemProp.http.proxyUser=Bancoazteca\\B196228
+systemProp.https.auth.ntlm.domain=10.50.8.21
+systemProp.http.proxyPassword=Gruposalinas2345
+systemProp.https.proxyPassword=Gruposalinas2345
+systemProp.https.proxyHost=10.50.8.21
+systemProp.http.auth.ntlm.domain=10.50.8.21
+systemProp.http.proxyHost=10.50.8.21
+systemProp.https.proxyPort=80
+systemProp.https.proxyUser=Bancoazteca\\B196228
+
+// Utilizado en Android Genymotion y Gradle y funcionando
+
+systemProp.http.proxyPassword=
+systemProp.https.proxyUser=Bancoazteca\\B196228
+systemProp.https.proxyPort=80
+systemProp.http.proxyHost=10.50.8.21
+systemProp.https.proxyPassword=
+systemProp.https.proxyHost=10.50.8.21
+systemProp.http.proxyUser=Bancoazteca\\B196228
+systemProp.http.proxyPort=80

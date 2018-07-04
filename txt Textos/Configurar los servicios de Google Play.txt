@@ -1,0 +1,6 @@
+Configurar los servicios de Google Play
+https://developers.google.com/android/guides/setup?hl=es-419#add_google_play_services_to_your_project
+
+
+Configurar Android Studio
+https://developer.android.com/studio/intro/studio-config?hl=es-419
